@@ -28,7 +28,7 @@
             <button class="btn btn-success" onclick="copyUrl()">Copy</button>
         </div>
     </div>
-    
+
     <script>
         async function shortenUrl() {
             const longUrl = document.getElementById("longUrl").value.trim();
@@ -46,13 +46,13 @@
             
             try {
                 const response = await fetch(apiUrl);
-                const data = await response.json();
-                
-                if (data.shortUrl) {
-                    document.getElementById("shortUrl").value = data.shortUrl;
-                    document.getElementById("result").style.display = "block";
+                const shortUrl = await response.text(); // Your API returns plain text
+
+                if (shortUrl.includes("error")) {
+                    alert(shortUrl);
                 } else {
-                    alert(data.error || "Failed to generate short URL");
+                    document.getElementById("shortUrl").value = shortUrl;
+                    document.getElementById("result").style.display = "block";
                 }
             } catch (error) {
                 alert("Error connecting to the server");
@@ -62,7 +62,7 @@
         function copyUrl() {
             const shortUrl = document.getElementById("shortUrl");
             shortUrl.select();
-            document.execCommand("copy");
+            navigator.clipboard.writeText(shortUrl.value);
             alert("Copied to clipboard: " + shortUrl.value);
         }
     </script>
