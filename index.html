@@ -12,30 +12,27 @@
 <body>
 
     <!-- Header Menu -->
-    <nav class="navbar navbar-expand-lg bg-body-dark border-bottom px-5 pt-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">URL Shortener</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">  <!-- Added ms-auto here -->
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">API Documentation</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+    <div id="navbar-container"></div> <!-- Navbar will be loaded here -->
+    <script>
+        // Function to load the navbar from navbar.html
+        function loadNavbar() {
+            fetch('navbar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('navbar-container').innerHTML = data;
+                })
+                .catch(error => console.error('Error loading navbar:', error));
+        }
+
+        // Call the function when the page loads
+        loadNavbar()
+
+    </script>
     
 
-    <div class="mainContainer d-flex justify-content-center align-items-center mt-5 container">
+    <div class="mainContainer d-flex flex-wrap flex-column-reverse flex-lg-row justify-content-center align-items-center mt-5 container">
             <!-- URL Shortner BOX -->
-            <div class="urlContainer col-4">
+            <div class="urlContainer col-4 ">
                 <!-- Long URL Box -->
                 <div class="mb-3">
                     <label for="longUrl" class="form-label">Enter your long URL here</label>
@@ -59,58 +56,17 @@
                 </div>
             </div>
 
-            <div class="heroImage col-8 d-flex justify-content-end">
+            <div class="heroImage col-md-6 col-10 d-flex justify-content-end mb-5 mb-lg-0">
                 <img src="assets/heroImage1.svg" alt="Hero Image">
             </div>
     </div>
 
 
+    <!-- Boostrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
-    <script>
-        async function shortenUrl() {
-            const longUrl = document.getElementById("longUrl").value.trim();
-            const alias = document.getElementById("alias").value.trim();
-    
-            if (!longUrl) {
-                alert("Please enter a valid URL");
-                return;
-            }
-    
-            let apiUrl = `https://s.harishhonda.com/api/${encodeURIComponent(longUrl)}`;
-            if (alias) {
-                apiUrl += `?alias=${encodeURIComponent(alias)}`;
-            }
-    
-            try {
-                const response = await fetch(apiUrl);
-    
-                // Ensure the response is valid
-                if (!response.ok) {
-                    throw new Error("Failed to shorten URL");
-                }
-    
-                const data = await response.json(); // Parse JSON response
-    
-                if (data.short_url) {
-                    document.getElementById("shortUrl").value = data.short_url; // Show short URL
-                    document.getElementById("result").style.display = "block"; // Show copy section
-                } else {
-                    alert("Error: " + (data.error || "Unknown error"));
-                }
-            } catch (error) {
-                alert("Error connecting to the server: " + error.message);
-            }
-        }
-    
-        function copyUrl() {
-            const shortUrl = document.getElementById("shortUrl");
-            shortUrl.select();
-            navigator.clipboard.writeText(shortUrl.value)
-                .then(() => alert("Copied to clipboard: " + shortUrl.value))
-                .catch(() => alert("Failed to copy URL"));
-        }
-    </script>
-    
+    <!-- External JS -->
+    <script src="assets/script.js"></script>
     
 </body>
 </html>
