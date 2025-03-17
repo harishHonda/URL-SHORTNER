@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Google Sheets URL Shortener API Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Menu (navbar.html) -->
+    <div id="navbar-container"></div>
+    <script>
+        function loadNavbar() {
+            fetch('/navbar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('navbar-container').innerHTML = data;
+                })
+                .catch(error => console.error('Error loading navbar:', error));
+        }
+        loadNavbar();
+    </script>
+
+    <div class="container mt-5">
+        <h1 class="text-center">integration URL Shortener API with Google Sheet</h1>
+        <hr>
+        <h2>1. Introduction</h2>
+        <p>
+            This script allows users to shorten URLs directly from Google Sheets using the API 
+            of <code>s.harishhonda.com</code>. It fetches short URLs for long URLs stored in 
+            the sheet and updates the respective columns automatically.
+        </p>
+
+        <h2>2. Features</h2>
+        <ul>
+            <li>Automatically shortens URLs present in specific columns.</li>
+            <li>Supports multiple column pairs (long URL → short URL).</li>
+            <li>Uses Google Apps Script to fetch and store short URLs.</li>
+            <li>Handles errors and logs issues if API requests fail.</li>
+        </ul>
+
+        <h2>3. How to Use</h2>
+        <p>Follow these steps to integrate the API with Google Sheets:</p>
+        <ol>
+            <li>Open your Google Sheet.</li>
+            <li>Click on <strong>Extensions > Apps Script</strong>.</li>
+            <li>Copy and paste the provided script.</li>
+            <li>Modify the column pairs as per your requirement.</li>
+            <li>Run the script to generate short URLs.</li>
+        </ol>
+
+        <h2>4. Script Code</h2>
+        <pre class="bg-light p-3">
+function shortenURLsDynamic() {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data"); // Change if needed
+    var lastRow = sheet.getLastRow(); // Get the last row with data
+
+    // Define column pairs: [Long URL Column, Short URL Column]
+    var columnPairs = [
+        ["A", "C"], // Column A (Long URL) → Column C (Short URL)
+        ["D", "F"], // Column D (Long URL) → Column F (Short URL)
+        ["G", "I"]  // Column G (Long URL) → Column I (Short URL)
+    ];
+
+    columnPairs.forEach(pair => {
+        var longCol = columnLetterToIndex(pair[0]); // Convert column letter to index
+        var shortCol = columnLetterToIndex(pair[1]); // Convert column letter to index
+
+        for (var i = 2; i <= lastRow; i++) { // Start from row 2 (assuming row 1 is a header)
+            var longUrl = sheet.getRange(i, longCol).getValue(); // Get long URL from the cell
+
+            if (longUrl && longUrl.trim() !== "") { // Ensure it's not empty
+                var shortUrl = getShortUrl(longUrl); // Call API to get short URL
+                if (shortUrl) {
+                    sheet.getRange(i, shortCol).setValue(shortUrl); // Paste short URL in the corresponding column
+                }
+            }
+        }
+    });
+}
+
+// Function to convert column letter (e.g., "A") to column index (e.g., 1)
+function columnLetterToIndex(letter) {
+    return letter.charCodeAt(0) - "A".charCodeAt(0) + 1;
+}
+
+// Function to call the API and get a short URL
+function getShortUrl(longUrl) {
+    var apiUrl = "https://s.harishhonda.com/api/" + encodeURIComponent(longUrl); // Construct API URL
+
+    try {
+        var response = UrlFetchApp.fetch(apiUrl, { method: "get" }); // Send GET request
+        return response.getContentText(); // API returns plain text (short URL)
+    } catch (e) {
+        Logger.log("Error fetching URL: " + e.toString()); // Log errors
+        return "";
+    }
+}
+        </pre>
+
+        <h2>5. Multi-Column Support</h2>
+        <p>
+            The script supports shortening URLs from **multiple columns** simultaneously.
+            You can define multiple column pairs in the <code>columnPairs</code> array.
+            Each pair represents a mapping of:
+        </p>
+        <ul>
+            <li>One column where long URLs are stored.</li>
+            <li>One column where the corresponding short URLs will be placed.</li>
+        </ul>
+
+        <h3>Example of Multiple Column Pairs:</h3>
+        <pre class="bg-light p-3">
+var columnPairs = [
+    ["A", "C"],  // Long URL in Column A → Short URL in Column C
+    ["D", "F"],  // Long URL in Column D → Short URL in Column F
+    ["G", "I"]   // Long URL in Column G → Short URL in Column I
+];
+        </pre>
+
+        <p>
+            Modify this array to include the columns you need. The script will iterate through 
+            each row in each pair and generate short URLs accordingly.
+        </p>
+
+        <h2>6. Error Handling</h2>
+        <p>
+            If there is an error while fetching the short URL, the script logs the error in the 
+            Google Apps Script Logger.
+        </p>
+
+        <h2>7. Conclusion</h2>
+        <p>
+            This script makes it easy to integrate Google Sheets with 
+            <code>s.harishhonda.com</code>'s URL shortener API, allowing you to shorten URLs 
+            automatically within your spreadsheet.
+        </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
