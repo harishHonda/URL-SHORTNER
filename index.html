@@ -30,7 +30,7 @@
     </script>
     
 
-    <div class="mainContainer d-flex flex-wrap flex-column-reverse flex-lg-row justify-content-center align-items-center mt-5 container">
+    <div class="mainContainer d-flex flex-wrap flex-column-reverse flex-lg-row justify-content-center align-items-center mt-5 container" style="margin-top: 100px!important;">
             <!-- URL Shortner BOX -->
             <div class="urlContainer col-4 ">
                 <!-- Long URL Box -->
@@ -60,6 +60,20 @@
                 <img src="assets/heroImage1.svg" alt="Hero Image">
             </div>
     </div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+    <script>
+        function loadFooter() {
+            fetch('footer.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('footer-container').innerHTML = data;
+                })
+                .catch(error => console.error('Error loading navbar:', error));
+        }
+        loadFooter();
+    </script>
 
 
     <!-- Boostrap -->
