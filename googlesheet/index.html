@@ -50,15 +50,16 @@
         </ol>
 
         <h2>4. Script Code</h2>
-        <pre class="bg-light p-3">function shortenURLsDynamic() {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data"); // Change if needed
+        <pre class="bg-light p-3">
+// Short URL Generator - Process only new rows
+function shortenURLsDynamic() {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("data"); // Change if needed
     var lastRow = sheet.getLastRow(); // Get the last row with data
 
     // Define column pairs: [Long URL Column, Short URL Column]
     var columnPairs = [
-        ["A", "C"], // Column A (Long URL) → Column C (Short URL)
-        ["D", "F"], // Column D (Long URL) → Column F (Short URL)
-        ["G", "I"]  // Column G (Long URL) → Column I (Short URL)
+        ["A", "B"],
+        ["D", "E"]
     ];
 
     columnPairs.forEach(pair => {
@@ -66,12 +67,14 @@
         var shortCol = columnLetterToIndex(pair[1]); // Convert column letter to index
 
         for (var i = 2; i <= lastRow; i++) { // Start from row 2 (assuming row 1 is a header)
-            var longUrl = sheet.getRange(i, longCol).getValue(); // Get long URL from the cell
+            var longUrl = sheet.getRange(i, longCol).getValue().trim(); // Get long URL from the cell
+            var shortUrlCell = sheet.getRange(i, shortCol);
+            var existingShortUrl = shortUrlCell.getValue().trim(); // Get existing short URL
 
-            if (longUrl && longUrl.trim() !== "") { // Ensure it's not empty
+            if (longUrl !== "" && existingShortUrl === "") { // Only process if short URL is empty
                 var shortUrl = getShortUrl(longUrl); // Call API to get short URL
                 if (shortUrl) {
-                    sheet.getRange(i, shortCol).setValue(shortUrl); // Paste short URL in the corresponding column
+                    shortUrlCell.setValue(shortUrl); // Paste short URL in the corresponding column
                 }
             }
         }
@@ -83,13 +86,14 @@ function columnLetterToIndex(letter) {
     return letter.charCodeAt(0) - "A".charCodeAt(0) + 1;
 }
 
-// Function to call the API and get a short URL
+// Function to call the API and get only the short URL
 function getShortUrl(longUrl) {
     var apiUrl = "https://s.harishhonda.com/api/" + encodeURIComponent(longUrl); // Construct API URL
 
     try {
         var response = UrlFetchApp.fetch(apiUrl, { method: "get" }); // Send GET request
-        return response.getContentText(); // API returns plain text (short URL)
+        var json = JSON.parse(response.getContentText()); // Parse JSON response
+        return json.short_url || ""; // Return only the short_url field
     } catch (e) {
         Logger.log("Error fetching URL: " + e.toString()); // Log errors
         return "";
@@ -111,9 +115,8 @@ function getShortUrl(longUrl) {
         <h3>Example of Multiple Column Pairs:</h3>
         <pre class="bg-light p-3">
 var columnPairs = [
-    ["A", "C"],  // Long URL in Column A → Short URL in Column C
-    ["D", "F"],  // Long URL in Column D → Short URL in Column F
-    ["G", "I"]   // Long URL in Column G → Short URL in Column I
+    ["A", "B"],  // Long URL in Column A → Short URL in Column B
+    ["D", "E"],  // Long URL in Column D → Short URL in Column E
 ];
         </pre>
 
