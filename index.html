@@ -34,10 +34,12 @@
             <!-- URL Shortner BOX -->
             <div class="urlContainer col-4 ">
                 <!-- Long URL Box -->
-                <div class="mb-3">
-                    <label for="longUrl" class="form-label">Enter your long URL here</label>
+                <label for="longUrl" class="form-label">Enter your long URL here</label>
+                <div class="input-group flex-nowrap mb-3">
+                    <span class="input-group-text rounded-0" id="addon-wrapping"><img src="assets/linkIcon.svg" alt="" height="20px" width="auto"></span>
                     <input type="text" id="longUrl" class="form-control p-3 rounded-0" placeholder="https://example.com">
                 </div>
+                  
 
                 <label for="alias" class="form-label">Customize your link <span class="text-muted">(optional)</span></label>
                 <div class="input-group mb-3">
@@ -45,7 +47,11 @@
                     <input type="text" class="form-control p-3 rounded-0" id="alias" placeholder="alias">
                 </div>
                 
-                <button class="btn btn-dark w-100 p-2 mt-3 rounded-0" onclick="shortenUrl()">Generate</button>
+                <div class="btn-group w-100" role="group" aria-label="Basic example">
+                    <button class="btn w-25 p-2 mt-3 rounded-0 me-1 text-white" style="background:#ff6363;" onclick="location.reload()">Reset</button>
+                    <button class="btn btn-dark w-75 p-2 mt-3 rounded-0" onclick="shortenUrl()">Generate</button>
+                </div>
+                
                 
                 <div class="mt-3" id="result" style="display: none;">
                     <label class="form-label">Shortened URL:</label>

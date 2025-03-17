@@ -50,52 +50,51 @@
         </ol>
 
         <h2>4. Script Code</h2>
-        <pre class="bg-light p-3">
-            function shortenURLsDynamic() {
-                var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data"); // Change if needed
-                var lastRow = sheet.getLastRow(); // Get the last row with data
+        <pre class="bg-light p-3">function shortenURLsDynamic() {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Data"); // Change if needed
+    var lastRow = sheet.getLastRow(); // Get the last row with data
 
-                // Define column pairs: [Long URL Column, Short URL Column]
-                var columnPairs = [
-                    ["A", "C"], // Column A (Long URL) → Column C (Short URL)
-                    ["D", "F"], // Column D (Long URL) → Column F (Short URL)
-                    ["G", "I"]  // Column G (Long URL) → Column I (Short URL)
-                ];
+    // Define column pairs: [Long URL Column, Short URL Column]
+    var columnPairs = [
+        ["A", "C"], // Column A (Long URL) → Column C (Short URL)
+        ["D", "F"], // Column D (Long URL) → Column F (Short URL)
+        ["G", "I"]  // Column G (Long URL) → Column I (Short URL)
+    ];
 
-                columnPairs.forEach(pair => {
-                    var longCol = columnLetterToIndex(pair[0]); // Convert column letter to index
-                    var shortCol = columnLetterToIndex(pair[1]); // Convert column letter to index
+    columnPairs.forEach(pair => {
+        var longCol = columnLetterToIndex(pair[0]); // Convert column letter to index
+        var shortCol = columnLetterToIndex(pair[1]); // Convert column letter to index
 
-                    for (var i = 2; i <= lastRow; i++) { // Start from row 2 (assuming row 1 is a header)
-                        var longUrl = sheet.getRange(i, longCol).getValue(); // Get long URL from the cell
+        for (var i = 2; i <= lastRow; i++) { // Start from row 2 (assuming row 1 is a header)
+            var longUrl = sheet.getRange(i, longCol).getValue(); // Get long URL from the cell
 
-                        if (longUrl && longUrl.trim() !== "") { // Ensure it's not empty
-                            var shortUrl = getShortUrl(longUrl); // Call API to get short URL
-                            if (shortUrl) {
-                                sheet.getRange(i, shortCol).setValue(shortUrl); // Paste short URL in the corresponding column
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Function to convert column letter (e.g., "A") to column index (e.g., 1)
-            function columnLetterToIndex(letter) {
-                return letter.charCodeAt(0) - "A".charCodeAt(0) + 1;
-            }
-
-            // Function to call the API and get a short URL
-            function getShortUrl(longUrl) {
-                var apiUrl = "https://s.harishhonda.com/api/" + encodeURIComponent(longUrl); // Construct API URL
-
-                try {
-                    var response = UrlFetchApp.fetch(apiUrl, { method: "get" }); // Send GET request
-                    return response.getContentText(); // API returns plain text (short URL)
-                } catch (e) {
-                    Logger.log("Error fetching URL: " + e.toString()); // Log errors
-                    return "";
+            if (longUrl && longUrl.trim() !== "") { // Ensure it's not empty
+                var shortUrl = getShortUrl(longUrl); // Call API to get short URL
+                if (shortUrl) {
+                    sheet.getRange(i, shortCol).setValue(shortUrl); // Paste short URL in the corresponding column
                 }
             }
+        }
+    });
+}
+
+// Function to convert column letter (e.g., "A") to column index (e.g., 1)
+function columnLetterToIndex(letter) {
+    return letter.charCodeAt(0) - "A".charCodeAt(0) + 1;
+}
+
+// Function to call the API and get a short URL
+function getShortUrl(longUrl) {
+    var apiUrl = "https://s.harishhonda.com/api/" + encodeURIComponent(longUrl); // Construct API URL
+
+    try {
+        var response = UrlFetchApp.fetch(apiUrl, { method: "get" }); // Send GET request
+        return response.getContentText(); // API returns plain text (short URL)
+    } catch (e) {
+        Logger.log("Error fetching URL: " + e.toString()); // Log errors
+        return "";
+    }
+}
         </pre>
 
         <h2>5. Multi-Column Support</h2>
@@ -111,11 +110,11 @@
 
         <h3>Example of Multiple Column Pairs:</h3>
         <pre class="bg-light p-3">
-            var columnPairs = [
-                ["A", "C"],  // Long URL in Column A → Short URL in Column C
-                ["D", "F"],  // Long URL in Column D → Short URL in Column F
-                ["G", "I"]   // Long URL in Column G → Short URL in Column I
-            ];
+var columnPairs = [
+    ["A", "C"],  // Long URL in Column A → Short URL in Column C
+    ["D", "F"],  // Long URL in Column D → Short URL in Column F
+    ["G", "I"]   // Long URL in Column G → Short URL in Column I
+];
         </pre>
 
         <p>
